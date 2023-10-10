@@ -1,10 +1,3 @@
-mod bindings;
-
-enum FilterMode {
-    LowPass,
-    HighPass,
-}
-
 pub struct Filter {
     biquad: BiquadFilter,
     sample_rate: f64,
@@ -51,6 +44,11 @@ impl Filter {
             self.set_cutoff(self.cutoff);
         }
     }
+}
+
+enum FilterMode {
+    LowPass,
+    HighPass,
 }
 
 /// The coefficients for a `BiquadFilter`.
