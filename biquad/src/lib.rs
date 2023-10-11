@@ -1,3 +1,5 @@
+mod bindings;
+
 pub struct Filter {
     biquad: BiquadFilter,
     sample_rate: f64,

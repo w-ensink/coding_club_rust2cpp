@@ -1,6 +1,7 @@
 #pragma once
 
 #include <juce_audio_processors/juce_audio_processors.h>
+#include <biquad_rs/bindings.h>
 
 class AudioPluginAudioProcessor  : public juce::AudioProcessor
 {
@@ -36,6 +37,7 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
 private:
+    std::vector<rust::Box<Filter>> filters;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginAudioProcessor)
 };

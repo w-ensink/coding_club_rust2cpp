@@ -3,3 +3,9 @@ name = "biquad"
 version = "0.1.0"
 edition = "2021"
 
+[dependencies]
+cxx = "1"
+
+[lib]
+crate-type = ["staticlib"]
+

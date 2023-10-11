@@ -1,5 +1,6 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include "biquad_rs/bindings.h"
 
 AudioPluginAudioProcessor::AudioPluginAudioProcessor()
      : AudioProcessor (BusesProperties()
@@ -81,9 +82,14 @@ void AudioPluginAudioProcessor::changeProgramName (int index, const juce::String
 }
 
 //==============================================================================
-void AudioPluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
+void AudioPluginAudioProcessor::prepareToPlay (double sampleRate, int )
 {
-    juce::ignoreUnused (sampleRate, samplesPerBlock);
+    const auto numChannels = getBusesLayout().getMainInputChannels();
+
+    filters.clear();
+    for (auto i = 0; i < numChannels; ++i) {
+        filters.emplace_back(create_lowpass_filter(sampleRate, 400.0));
+    }
 }
 
 void AudioPluginAudioProcessor::releaseResources()
@@ -124,8 +130,12 @@ void AudioPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
 
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
-        auto* channelData = buffer.getWritePointer (channel);
-        juce::ignoreUnused (channelData);
+        auto* writePointer = buffer.getWritePointer(channel);
+        auto* readPointer = buffer.getReadPointer(channel);
+
+        for (int sample = 0; sample < buffer.getNumSamples(); ++sample) {
+            writePointer[sample] = filters[channel]->process(readPointer[sample]);
+        }
     }
 }
 
